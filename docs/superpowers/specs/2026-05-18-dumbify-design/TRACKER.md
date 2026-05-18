@@ -46,21 +46,21 @@ Legend:
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 3.1 | `AppMonitorService` foreground service polling UsageStatsManager | ⬜ | Verify battery impact |
-| 3.2 | Grant flow for `PACKAGE_USAGE_STATS` (Settings intent on first run) | ⬜ | |
-| 3.3 | `setPackagesSuspended` integration in `PolicyEnforcer` | ⬜ | |
-| 3.4 | `BlockScreenActivity` (Compose UI, custom message, action buttons) | ⬜ | |
-| 3.5 | `BootReceiver` restarts service on boot | ⬜ | |
-| 3.6 | `ReSuspendWorker` re-suspends apps when grant expires | ⬜ | |
-| 3.7 | `BypassController` state machine (DELAY / PIN / DELAY_AND_PIN) + unit tests | ⬜ | |
+| 3.1 | `AppMonitorService` foreground service polling UsageStatsManager | ✅ | Verify battery impact |
+| 3.2 | Grant flow for `PACKAGE_USAGE_STATS` (Settings intent on first run) | ✅ | PACKAGE_USAGE_STATS check + notification redirect; full grant UI in Plan 5 setup wizard |
+| 3.3 | `setPackagesSuspended` integration in `PolicyEnforcer` | ✅ | setPackagesSuspended already in PolicyEnforcer from Plan 1 |
+| 3.4 | `BlockScreenActivity` (Compose UI, custom message, action buttons) | ✅ | |
+| 3.5 | `BootReceiver` restarts service on boot | ✅ | |
+| 3.6 | `ReSuspendWorker` re-suspends apps when grant expires | ✅ | |
+| 3.7 | `BypassController` state machine (DELAY / PIN / DELAY_AND_PIN) + unit tests | ✅ | |
 
 ## M4 — Notification suppression
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 4.1 | `DumbifyNotificationListener` service registered in manifest | ⬜ | |
-| 4.2 | Grant flow for notif listener access | ⬜ | |
-| 4.3 | Suppress notifs from blocked packages | ⬜ | |
+| 4.1 | `DumbifyNotificationListener` service registered in manifest | ✅ | |
+| 4.2 | Grant flow for notif listener access | ✅ | isNotificationListenerEnabled check exposed; full Settings redirect in Plan 5 |
+| 4.3 | Suppress notifs from blocked packages | ✅ | |
 
 ## M5 — UI — Setup wizard
 
@@ -157,3 +157,4 @@ Legend:
 |---|---|
 | 2026-05-18 | Initial tracker created from design spec |
 | 2026-05-18 | Plan 1 complete: M0, M1, M2 done. Bootstrap + DO + data layer landed. |
+| 2026-05-19 | Plan 2 complete: M3, M4 done. App blocking, bypass flow, notification suppression landed. |
