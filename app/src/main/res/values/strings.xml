@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dumbify</string>
+    <string name="device_admin_description">Dumbify protects your focus by restricting which apps can run on this device. It must be set as Device Owner to function.</string>
+    <string name="notif_foreground_service">Dumbify is protecting your focus</string>
+</resources>
