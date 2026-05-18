@@ -1,8 +1,8 @@
 package com.dumbify.app.di
 
 import android.content.Context
+import com.dumbify.app.block.WorkManagerGrantScheduler
 import com.dumbify.app.policy.GrantScheduler
-import com.dumbify.app.policy.NoOpGrantScheduler
 import com.dumbify.app.util.Clock
 import com.dumbify.app.util.SystemClock
 import dagger.Binds
@@ -24,7 +24,7 @@ abstract class PolicyModule {
     abstract fun bindClock(impl: SystemClock): Clock
 
     @Binds @Singleton
-    abstract fun bindGrantScheduler(impl: NoOpGrantScheduler): GrantScheduler
+    abstract fun bindGrantScheduler(impl: WorkManagerGrantScheduler): GrantScheduler
 
     companion object {
         @Provides @Singleton @Named("ownPackage")
