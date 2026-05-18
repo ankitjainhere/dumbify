@@ -1,0 +1,27 @@
+# Android Studio / Gradle
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+.cxx/
+.kotlin/
+
+# Generated APKs
+app/release/
+*.apk
+*.aab
+*.keystore
+keystore.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Room schema export
+app/schemas/*.json
+!app/schemas/.gitkeep
+
+# Logs
+*.log
