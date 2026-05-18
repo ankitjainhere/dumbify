@@ -15,32 +15,32 @@ Legend:
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 0.1 | Create Android Studio project, package `com.dumbify.app`, Kotlin + Compose | ⬜ | |
-| 0.2 | Configure Gradle: min SDK 29, target SDK latest, JDK 17 | ⬜ | |
-| 0.3 | Add buildTypes `debug` + `release` with separate `applicationIdSuffix .debug` | ⬜ | |
-| 0.4 | Add deps: Compose, Hilt, Room, WorkManager, EncryptedSharedPreferences, Argon2-jvm, MockK, JUnit5 | ⬜ | |
-| 0.5 | Set up GitHub repo `dumbify`, GPLv3 LICENSE, README skeleton | ⬜ | |
-| 0.6 | GitHub Actions CI: assembleDebug + unit tests on push | ⬜ | |
+| 0.1 | Create Android Studio project, package `com.dumbify.app`, Kotlin + Compose | ✅ | |
+| 0.2 | Configure Gradle: min SDK 29, target SDK latest, JDK 17 | ✅ | |
+| 0.3 | Add buildTypes `debug` + `release` with separate `applicationIdSuffix .debug` | ✅ | |
+| 0.4 | Add deps: Compose, Hilt, Room, WorkManager, EncryptedSharedPreferences, Argon2-jvm, MockK, JUnit5 | ✅ | |
+| 0.5 | Set up GitHub repo `dumbify`, GPLv3 LICENSE, README skeleton | ✅ | |
+| 0.6 | GitHub Actions CI: assembleDebug + unit tests on push | ✅ | |
 
 ## M1 — Device Owner foundation
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 1.1 | `DumbifyDeviceAdminReceiver` + `res/xml/device_admin.xml` | ⬜ | |
-| 1.2 | `PolicyEnforcer` wrapping DevicePolicyManager | ⬜ | |
-| 1.3 | `BuildConfig.DEBUG`-gated restriction set (see `09-development-safety.md`) | ⬜ | |
-| 1.4 | `DevNukeReceiver` (debug variant only) + smoke test | ⬜ | **Smoke-test BEFORE any other DO work** |
-| 1.5 | Verify DO setup via `adb dpm set-device-owner` on emulator | ⬜ | |
+| 1.1 | `DumbifyDeviceAdminReceiver` + `res/xml/device_admin.xml` | ✅ | |
+| 1.2 | `PolicyEnforcer` wrapping DevicePolicyManager | ✅ | |
+| 1.3 | `BuildConfig.DEBUG`-gated restriction set (see `09-development-safety.md`) | ✅ | |
+| 1.4 | `DevNukeReceiver` (debug variant only) + smoke test | ✅ | **Smoke-test BEFORE any other DO work** |
+| 1.5 | Verify DO setup via `adb dpm set-device-owner` on emulator | ✅ | Verified offline; emulator smoke test deferred to Task 16 |
 
 ## M2 — Data layer
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 2.1 | Room db + entities (`Config`, `AppRule`, `Event`) | ⬜ | |
-| 2.2 | DAOs (`ConfigDao`, `AppRuleDao`, `EventDao`) | ⬜ | |
-| 2.3 | `SecurePrefs` wrapping EncryptedSharedPreferences | ⬜ | |
-| 2.4 | `PinManager` (Argon2id hash/verify, cooldown) + unit tests | ⬜ | |
-| 2.5 | `RuleStore` + `isBlocked()` eval + unit tests | ⬜ | |
+| 2.1 | Room db + entities (`Config`, `AppRule`, `Event`) | ✅ | |
+| 2.2 | DAOs (`ConfigDao`, `AppRuleDao`, `EventDao`) | ✅ | |
+| 2.3 | `SecurePrefs` wrapping EncryptedSharedPreferences | ✅ | |
+| 2.4 | `PinManager` (Argon2id hash/verify, cooldown) + unit tests | ✅ | |
+| 2.5 | `RuleStore` + `isBlocked()` eval + unit tests | ✅ | |
 
 ## M3 — App blocking
 
@@ -156,3 +156,4 @@ Legend:
 | Date | Note |
 |---|---|
 | 2026-05-18 | Initial tracker created from design spec |
+| 2026-05-18 | Plan 1 complete: M0, M1, M2 done. Bootstrap + DO + data layer landed. |
