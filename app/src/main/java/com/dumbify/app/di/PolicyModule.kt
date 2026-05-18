@@ -1,15 +1,16 @@
 package com.dumbify.app.di
 
-import com.dumbify.app.admin.PolicyEnforcer
+import com.dumbify.app.util.Clock
+import com.dumbify.app.util.SystemClock
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PolicyModule {
-    // PolicyEnforcer is @Inject constructor — no provides needed.
-    // Module exists for future bindings.
+abstract class PolicyModule {
+    @Binds @Singleton
+    abstract fun bindClock(impl: SystemClock): Clock
 }
