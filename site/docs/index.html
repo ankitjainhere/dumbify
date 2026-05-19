@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs — Dumbify</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <nav>
+    <a class="logo" href="/">Dumbi<span>fy</span></a>
+    <div class="links">
+      <a href="../install/">Install</a>
+      <a href="./" style="color:var(--text)">Docs</a>
+      <a href="../faq/">FAQ</a>
+      <a href="https://github.com/ankitjainhere/dumbify" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="section docs-content" style="padding-top:2.5rem">
+    <h1 style="margin-bottom:0.5rem">Documentation</h1>
+    <p style="color:var(--muted);margin-bottom:2rem">Setup, usage, and device-specific guidance.</p>
+
+    <h2 id="requirements">Requirements</h2>
+    <ul>
+      <li>Android 10 or newer (SDK 29+)</li>
+      <li>No Google or other accounts signed in at install time</li>
+      <li>USB cable (data-capable, not charge-only)</li>
+      <li>Desktop Chrome or Edge for the WebUSB installer</li>
+      <li>USB debugging enabled (see below)</li>
+    </ul>
+
+    <h2 id="usb-debug">Enabling USB debugging</h2>
+
+    <h3>Stock Android (Pixel, Android One)</h3>
+    <ol>
+      <li><strong>Settings → About phone</strong></li>
+      <li>Tap <strong>Build number</strong> 7 times</li>
+      <li><strong>Settings → System → Developer options</strong></li>
+      <li>Enable <strong>USB debugging</strong></li>
+    </ol>
+
+    <h3>Samsung (One UI)</h3>
+    <ol>
+      <li><strong>Settings → About phone → Software information</strong></li>
+      <li>Tap <strong>Build number</strong> 7 times</li>
+      <li><strong>Settings → Developer options</strong></li>
+      <li>Enable <strong>USB debugging</strong></li>
+    </ol>
+
+    <h3>Xiaomi (MIUI / HyperOS)</h3>
+    <ol>
+      <li><strong>Settings → About phone</strong></li>
+      <li>Tap <strong>MIUI version</strong> 7 times</li>
+      <li><strong>Settings → Additional settings → Developer options</strong></li>
+      <li>Enable <strong>USB debugging</strong></li>
+    </ol>
+
+    <h3>OnePlus (OxygenOS)</h3>
+    <ol>
+      <li><strong>Settings → About device</strong></li>
+      <li>Tap <strong>Build number</strong> 7 times</li>
+      <li><strong>Settings → System → Developer options</strong></li>
+      <li>Enable <strong>USB debugging</strong></li>
+    </ol>
+
+    <h2 id="remove-accounts">Removing accounts before install</h2>
+    <p>Android's Device Owner API requires no accounts to be present at provisioning time. Remove all accounts before running the installer.</p>
+    <ol>
+      <li><strong>Settings → Accounts</strong> (or <strong>Passwords &amp; accounts</strong>)</li>
+      <li>Tap each account → <strong>Remove account</strong></li>
+      <li>Repeat until none remain</li>
+    </ol>
+    <p>You can add accounts back after Dumbify is installed and set as Device Owner.</p>
+
+    <h2 id="setup-wizard">Setup wizard</h2>
+    <p>On first launch, Dumbify guides you through 8 screens:</p>
+    <ol>
+      <li><strong>Role</strong> — are you setting this up for yourself or someone else?</li>
+      <li><strong>Mode</strong> — Allowlist (block everything except chosen apps) or Denylist (allow everything except chosen apps)</li>
+      <li><strong>PINs</strong> — Removal PIN (mandatory, ideally held by a trusted person) and optional Bypass PIN</li>
+      <li><strong>Message</strong> — custom text shown on the block screen</li>
+      <li><strong>App picker</strong> — select which apps to allow/block; essentials (Phone, Camera, Settings) are pre-selected and locked</li>
+      <li><strong>Bypass defaults</strong> — choose friction: Delay (wait N seconds), PIN, or both</li>
+      <li><strong>Launcher</strong> — optionally replace home screen with Dumbify's minimal launcher</li>
+      <li><strong>Done</strong> — settings applied, Device Owner restrictions activated</li>
+    </ol>
+    <p>Closing mid-wizard saves progress. The wizard resumes where you left off on next open.</p>
+
+    <h2 id="bypass">Unblocking an app temporarily</h2>
+    <p>When a blocked app is opened, the block screen appears. Tap a duration button (5 / 15 / 30 min) to request temporary access.</p>
+    <ul>
+      <li><strong>Delay mode</strong> — a countdown timer runs; access granted automatically when it finishes</li>
+      <li><strong>PIN mode</strong> — enter the bypass PIN</li>
+      <li><strong>Delay + PIN</strong> — wait out the timer, then enter the PIN</li>
+    </ul>
+    <p>Three wrong PINs trigger a 5-minute cooldown.</p>
+
+    <h2 id="removal">Removing Dumbify</h2>
+    <p>Settings → <strong>Remove Dumbify</strong> → enter Removal PIN → confirm standard Android uninstall dialog.</p>
+    <p>If you don't have the Removal PIN, the only option is a factory reset via the bootloader (power off → hold Volume Down + Power, then "Wipe data"). See <a href="../faq/#brick">FAQ: recovery</a>.</p>
+
+    <h2 id="permissions">Permissions used</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:0.875rem">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+          <th style="text-align:left;padding:0.5rem 0">Permission</th>
+          <th style="text-align:left;padding:0.5rem 0">Why</th>
+        </tr>
+      </thead>
+      <tbody style="color:var(--muted)">
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:0.5rem 0"><code>PACKAGE_USAGE_STATS</code></td>
+          <td style="padding:0.5rem 0">Detect which app is in foreground (to know when to block)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:0.5rem 0"><code>FOREGROUND_SERVICE</code></td>
+          <td style="padding:0.5rem 0">AppMonitorService runs persistently to catch app launches</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:0.5rem 0"><code>BIND_NOTIFICATION_LISTENER_SERVICE</code></td>
+          <td style="padding:0.5rem 0">Suppress notifications from blocked apps</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:0.5rem 0"><code>RECEIVE_BOOT_COMPLETED</code></td>
+          <td style="padding:0.5rem 0">Restart monitor service on reboot</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem 0">Device Owner (via ADB)</td>
+          <td style="padding:0.5rem 0"><code>setPackagesSuspended</code>, <code>setUninstallBlocked</code>, user restrictions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p>Dumbify is <a href="https://github.com/ankitjainhere/dumbify" target="_blank">open source</a> under GPLv3 &mdash; <a href="../">Home</a></p>
+  </footer>
+</body>
+</html>

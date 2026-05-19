@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Dumbify</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <nav>
+    <a class="logo" href="/">Dumbi<span>fy</span></a>
+    <div class="links">
+      <a href="../install/">Install</a>
+      <a href="../docs/">Docs</a>
+      <a href="./" style="color:var(--text)">FAQ</a>
+      <a href="https://github.com/ankitjainhere/dumbify" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="section docs-content" style="padding-top:2.5rem">
+    <h1 style="margin-bottom:0.5rem">FAQ</h1>
+    <p style="color:var(--muted);margin-bottom:2rem">Common questions about Dumbify.</p>
+
+    <h2 id="data">What data does Dumbify collect?</h2>
+    <p>None. There is no backend, no analytics, no crash reporting, no accounts. Everything — block rules, PINs, audit log — stays on the device. The only network call the app makes is to WorkManager scheduling (local only). The installer site fetches the APK from GitHub Releases; that's a standard GitHub CDN request.</p>
+
+    <h2 id="do-conflict">Another Device Owner is already set — what do I do?</h2>
+    <p>Android allows exactly one Device Owner at a time. If another MDM or parental control app is already set as DO, you must factory-reset the phone before Dumbify can be installed.</p>
+    <ol>
+      <li>Back up anything important (factory reset wipes the phone)</li>
+      <li>Power off → hold Volume Down + Power to enter bootloader (varies by device)</li>
+      <li>Select <strong>Wipe data / Factory reset</strong></li>
+      <li>After reset, run the Dumbify installer before signing into any Google account</li>
+    </ol>
+
+    <h2 id="brick">I forgot the PIN and need to remove Dumbify</h2>
+    <p>There is no PIN recovery. This is intentional — a recovery mechanism would let you bypass the protection.</p>
+    <p>The only option is a factory reset via the bootloader:</p>
+    <ol>
+      <li>Power off the phone</li>
+      <li>Hold the bootloader key combo for your device (usually Volume Down + Power)</li>
+      <li>Select <strong>Wipe data / Factory reset</strong> and confirm</li>
+    </ol>
+    <p>This erases all data. If you used Google Backup, most app data restores automatically after signing in again.</p>
+    <p style="color:var(--warn)">This is why the setup wizard strongly recommends having a trusted person set the Removal PIN — someone who can make the removal decision consciously, not impulsively.</p>
+
+    <h2 id="accounts">Why must I remove Google accounts before installing?</h2>
+    <p>Android's <code>DevicePolicyManager.setDeviceOwner()</code> API refuses to run if any accounts (Google, Samsung, etc.) are present. This is an Android security restriction, not something Dumbify can bypass. You can add accounts back immediately after the install wizard completes.</p>
+
+    <h2 id="bypass-attempts">What happens after too many wrong bypass PIN attempts?</h2>
+    <p>3 wrong entries trigger a 5-minute cooldown. The counter and cooldown timestamp are stored in EncryptedSharedPreferences and survive reboots. After the cooldown you get 3 more attempts.</p>
+
+    <h2 id="reboot">Does Dumbify survive a reboot?</h2>
+    <p>Yes. A <code>BootReceiver</code> restarts <code>AppMonitorService</code> on every boot. Grant expiry (temporary unblocks) are re-enforced by <code>ReSuspendWorker</code> via WorkManager.</p>
+
+    <h2 id="allowlist-escape">Can I open Settings / Phone / Camera even if they're blocked?</h2>
+    <p>Yes. Phone, Messages, Camera, Settings, and Dumbify itself are hardcoded as always-allowed regardless of mode. You cannot lock yourself out of essentials.</p>
+
+    <h2 id="license">What license is Dumbify under?</h2>
+    <p>GPLv3. You can read, modify, and redistribute the source. Modified versions must also be GPLv3. See <a href="https://github.com/ankitjainhere/dumbify/blob/main/LICENSE" target="_blank">LICENSE</a>.</p>
+
+    <h2 id="ios">Is there an iOS version?</h2>
+    <p>No. iOS doesn't expose an equivalent of Device Owner mode to third-party apps. A meaningful iOS port isn't feasible. See <a href="https://github.com/ankitjainhere/dumbify/blob/main/docs/superpowers/specs/2026-05-18-dumbify-design/07-future-work.md" target="_blank">future work</a>.</p>
+
+    <h2 id="battery">Does the background monitoring drain battery?</h2>
+    <p><code>AppMonitorService</code> polls <code>UsageStatsManager</code> every ~500ms. In practice this is negligible — UsageStats queries are cheap cached reads. Real-world impact is expected to be &lt;1% additional drain. Battery impact will be formally measured in v1 testing.</p>
+  </div>
+
+  <footer>
+    <p>Dumbify is <a href="https://github.com/ankitjainhere/dumbify" target="_blank">open source</a> under GPLv3 &mdash; <a href="../">Home</a></p>
+  </footer>
+</body>
+</html>

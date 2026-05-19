@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Dumbify</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <nav>
+    <a class="logo" href="/">Dumbi<span>fy</span></a>
+    <div class="links">
+      <a href="../install/">Install</a>
+      <a href="../docs/">Docs</a>
+      <a href="../faq/">FAQ</a>
+      <a href="https://github.com/ankitjainhere/dumbify" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="section docs-content" style="padding-top:2.5rem">
+    <h1 style="margin-bottom:0.5rem">About</h1>
+    <p style="color:var(--muted);margin-bottom:2rem">Open-source, no backend, built to last.</p>
+
+    <h2>What is Dumbify?</h2>
+    <p>Dumbify is an Android app that uses the Device Owner API to hard-block distracting apps at the OS level. Unlike screen-time apps that rely on self-reported timers or accessibility hacks, Dumbify suspends apps the same way enterprise MDM software does — the app simply cannot be opened.</p>
+    <p>The goal is to make your phone boring on purpose. Not a timer. Not a nudge. A hard block with deliberate friction to remove.</p>
+
+    <h2>Why Device Owner?</h2>
+    <p>Most distraction-blocker apps can be bypassed by uninstalling them or disabling their accessibility service in Settings. Device Owner mode prevents uninstall (<code>setUninstallBlocked</code>) and gives access to <code>setPackagesSuspended</code> — the only API that prevents an app from launching at all, even from other apps.</p>
+    <p>The tradeoff: setup requires a desktop browser and a USB cable. That friction is intentional — it makes the commitment feel real.</p>
+
+    <h2>Privacy</h2>
+    <p>No data leaves your device. No accounts. No analytics. No crash reporting. The only outbound network calls are:</p>
+    <ul>
+      <li>The installer site fetching the APK from GitHub Releases (a standard CDN request to GitHub)</li>
+      <li>WorkManager scheduling — fully local, no network</li>
+    </ul>
+
+    <h2>License</h2>
+    <p>GPLv3. Read it, fork it, ship improvements back.</p>
+    <p><a href="https://github.com/ankitjainhere/dumbify/blob/main/LICENSE" target="_blank">Full license text →</a></p>
+
+    <h2>Source code</h2>
+    <p><a href="https://github.com/ankitjainhere/dumbify" target="_blank">github.com/ankitjainhere/dumbify</a></p>
+
+    <h2>Tech stack</h2>
+    <ul>
+      <li>Kotlin + Jetpack Compose</li>
+      <li>Hilt (dependency injection)</li>
+      <li>Room (local database)</li>
+      <li>WorkManager (grant expiry scheduling)</li>
+      <li>EncryptedSharedPreferences + Argon2id (PIN storage)</li>
+      <li>DevicePolicyManager / Device Owner API</li>
+    </ul>
+
+    <h2>Installer site</h2>
+    <ul>
+      <li>Plain HTML + vanilla JS — no framework</li>
+      <li><a href="https://github.com/yume-chan/ya-webadb" target="_blank">ya-webadb</a> for WebUSB ADB</li>
+      <li>Hosted on GitHub Pages</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>Dumbify is <a href="https://github.com/ankitjainhere/dumbify" target="_blank">open source</a> under GPLv3 &mdash; <a href="../">Home</a></p>
+  </footer>
+</body>
+</html>
