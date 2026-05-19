@@ -66,15 +66,15 @@ Legend:
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 5.1 | Screen 1: Welcome + Role pick (SELF / MANAGED) | ⬜ | |
-| 5.2 | Screen 2: Mode pick (ALLOWLIST / DENYLIST) | ⬜ | |
-| 5.3 | Screen 3: PINs (Removal mandatory, Bypass conditional) | ⬜ | |
-| 5.4 | Screen 4: Custom motivational message | ⬜ | |
-| 5.5 | Screen 5: App picker (with PackageManager loader, always-allowed pre-selected) | ⬜ | |
-| 5.6 | Screen 6: Bulk-apply bypass defaults + per-app overrides | ⬜ | |
-| 5.7 | Screen 7: Optional launcher toggle | ⬜ | |
-| 5.8 | Screen 8: Apply restrictions, mark `onboardingComplete` | ⬜ | |
-| 5.9 | `SetupViewModel` state machine + draft persistence (resume on abort) | ⬜ | |
+| 5.1 | Screen 1: Welcome + Role pick (SELF / MANAGED) | ✅ | |
+| 5.2 | Screen 2: Mode pick (ALLOWLIST / DENYLIST) | ✅ | |
+| 5.3 | Screen 3: PINs (Removal mandatory, Bypass conditional) | ✅ | |
+| 5.4 | Screen 4: Custom motivational message | ✅ | |
+| 5.5 | Screen 5: App picker (with PackageManager loader, always-allowed pre-selected) | ✅ | Device-aware: resolves Phone/Messages/Camera/Settings via PackageManager intents |
+| 5.6 | Screen 6: Bulk-apply bypass defaults + per-app overrides | ✅ | Bulk apply + per-app cycle button |
+| 5.7 | Screen 7: Optional launcher toggle | ✅ | |
+| 5.8 | Screen 8: Apply restrictions, mark `onboardingComplete` | ✅ | Writes config last to trigger Flow routing |
+| 5.9 | `SetupViewModel` state machine + draft persistence (resume on abort) | ✅ | Step persisted to SecurePrefs WIZARD_STEP key |
 
 ## M6 — UI — Main app
 
@@ -158,3 +158,4 @@ Legend:
 | 2026-05-18 | Initial tracker created from design spec |
 | 2026-05-18 | Plan 1 complete: M0, M1, M2 done. Bootstrap + DO + data layer landed. |
 | 2026-05-19 | Plan 2 complete: M3, M4 done. App blocking, bypass flow, notification suppression landed. |
+| 2026-05-19 | Plan 3 complete: M5 done. Setup wizard (8 screens), SetupViewModel, MainViewModel routing. Fixed AppMonitorService null-clear bug and BlockScreenActivity onNewIntent pkg update. |

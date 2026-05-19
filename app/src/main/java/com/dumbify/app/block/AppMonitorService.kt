@@ -62,7 +62,9 @@ class AppMonitorService : Service() {
     private suspend fun monitorLoop() {
         while (true) {
             val fgPkg = queryForegroundPackage()
-            if (fgPkg != null && fgPkg != packageName) {
+            if (fgPkg == null) {
+                lastSuspendedPkg = null
+            } else if (fgPkg != packageName) {
                 val now = clock.nowMillis()
                 if (ruleStore.isBlocked(fgPkg, now) && fgPkg != lastSuspendedPkg) {
                     runCatching {

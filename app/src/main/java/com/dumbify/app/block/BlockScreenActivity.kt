@@ -44,6 +44,8 @@ class BlockScreenActivity : ComponentActivity() {
     @Inject lateinit var bypassController: BypassController
     @Inject lateinit var ruleStore: RuleStore
 
+    private var pkg by mutableStateOf("")
+
     companion object {
         const val EXTRA_PKG = "pkg"
 
@@ -56,7 +58,7 @@ class BlockScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val pkg = intent.getStringExtra(EXTRA_PKG)?.takeIf { it.isNotBlank() } ?: run { finish(); return }
+        pkg = intent.getStringExtra(EXTRA_PKG)?.takeIf { it.isNotBlank() } ?: run { finish(); return }
         bypassController.cancelRequest()
 
         setContent {
@@ -83,6 +85,8 @@ class BlockScreenActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
+        intent.getStringExtra(EXTRA_PKG)?.takeIf { it.isNotBlank() }?.let { pkg = it }
         bypassController.cancelRequest()
     }
 

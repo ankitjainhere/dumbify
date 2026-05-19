@@ -71,4 +71,5 @@ object SecurePrefsKeys {
     const val BYPASS_PIN_SALT = "bypass_pin_salt"
     const val PIN_FAIL_COUNT = "pin_fail_count"
     const val PIN_COOLDOWN_UNTIL = "pin_cooldown_until"
+    const val WIZARD_STEP = "wizard_step"
 }
