@@ -6,6 +6,8 @@
  * Spec: docs/superpowers/specs/2026-05-18-dumbify-design/06-installer-site.md
  */
 
+import { credentialStore } from './credentialStore.js';
+
 const OWNER_COMPONENT = 'com.dumbify.app/.admin.DumbifyDeviceAdminReceiver';
 const GITHUB_API      = 'https://api.github.com/repos/ankitjainhere/dumbify/releases/latest';
 const TMP_PATH        = '/data/local/tmp/dumbify.apk';
@@ -16,46 +18,77 @@ export class AdbSession {
 
   /** Open WebUSB device picker and perform ADB handshake. */
   async connect(onLog) {
-    const { AdbDaemonWebUsbDeviceManager, AdbDaemonTransport, Adb } =
+    const { AdbDaemonTransport, Adb } =
       await import('@yume-chan/adb');
-    const { AdbDaemonWebUsbDevice } =
+    const { AdbDaemonWebUsbDeviceManager, AdbDaemonWebUsbDevice } =
       await import('@yume-chan/adb-daemon-webusb');
 
-    const manager = AdbDaemonWebUsbDeviceManager.BROWSER_DEFAULT;
+    const manager = AdbDaemonWebUsbDeviceManager.BROWSER;
     if (!manager) throw new Error('WebUSB not available');
 
     onLog('Requesting USB device…', 'info');
     const device = await manager.requestDevice();
     if (!device) throw new Error('No device selected');
 
-    onLog(`Device selected: ${device.name}`, 'info');
+    onLog(`Device selected: ${device.name || device.productName || device.serial}`, 'info');
     onLog('Performing ADB handshake — tap "Allow USB debugging" on phone…', 'info');
 
-    const transport = await AdbDaemonTransport.authenticate({
-      serial: device.serial,
-      connection: await device.connect(),
-      credentialStore: AdbDaemonWebUsbDevice.credentialStore,
-    });
+    try {
+      const transport = await AdbDaemonTransport.authenticate({
+        serial: device.serial,
+        connection: await device.connect(),
+        credentialStore,
+      });
 
-    this.#adb = new Adb(transport);
+      this.#adb = new Adb(transport);
+    } catch (e) {
+      if (e instanceof AdbDaemonWebUsbDevice.DeviceBusyError) {
+        throw new Error(
+          'Device is in use by another program. ' +
+          'Close Android Studio, run: adb kill-server, then retry.',
+        );
+      }
+      throw e;
+    }
+
     onLog('ADB connected ✓', 'ok');
     return this;
   }
 
   /** Run a shell command and return trimmed stdout. */
   async shell(cmd) {
-    const output = await this.#adb.subprocess.spawnAndWait(cmd);
-    return output.stdout.trim();
+    const { exitCode, stdout, stderr } = await this.#spawnShell(cmd);
+    if (exitCode !== 0) throw new Error(`Command failed (exit ${exitCode}): ${stderr || stdout}`);
+    return stdout.trim();
+  }
+
+  async #spawnShell(cmd) {
+    if (this.#adb.subprocess.shellProtocol?.spawnWaitText) {
+      return this.#adb.subprocess.shellProtocol.spawnWaitText(cmd);
+    }
+
+    const process = await this.#adb.subprocess.shell(cmd);
+    const [stdout, stderr, exitCode] = await Promise.all([
+      readText(process.stdout),
+      readText(process.stderr),
+      process.exit,
+    ]);
+
+    return { exitCode, stdout, stderr };
   }
 
   /** Pre-flight: SDK version >= 29, no accounts. */
   async preflight(onLog) {
-    const sdk = parseInt(await this.shell('getprop ro.build.version.sdk'), 10);
+    const sdkText = await this.shell('getprop ro.build.version.sdk');
+    const sdk = parseInt(sdkText, 10);
     onLog(`Android SDK: ${sdk}`, sdk >= 29 ? 'ok' : 'err');
+    if (Number.isNaN(sdk)) {
+      throw new Error(`Could not read Android SDK version from device. getprop returned: ${JSON.stringify(sdkText)}`);
+    }
     if (sdk < 29) throw new Error('Android 10 (SDK 29) or newer required.');
 
-    const accounts = await this.shell('dumpsys account | grep "Account {"');
-    if (accounts.length > 0) {
+    const accounts = await this.shell('dumpsys account');
+    if (accounts.includes('Account {')) {
       onLog('Google/other accounts detected — must remove before installing', 'err');
       throw new Error('ACCOUNTS_PRESENT');
     }
@@ -90,16 +123,16 @@ export class AdbSession {
 
     onLog('Pushing APK to device…', 'info');
     const sync = await this.#adb.sync();
-    await sync.write({
-      filename: TMP_PATH,
-      file: new ReadableStream({
-        start(c) { c.enqueue(apkBytes); c.close(); },
-      }),
-      type: AdbSyncEntryResponse.Type.Regular,
-      permission: 0o644,
-      lastModified: new Date(),
-    });
-    sync.dispose();
+    try {
+      await sync.write({
+        filename: TMP_PATH,
+        file: new ReadableStream({
+          start(c) { c.enqueue(apkBytes); c.close(); },
+        }),
+      });
+    } finally {
+      await sync.dispose();
+    }
     onLog('APK on device ✓', 'ok');
     return TMP_PATH;
   }
@@ -134,5 +167,22 @@ export class AdbSession {
 }
 
 export function isWebUsbSupported() {
-  return 'usb' in navigator;
+  return window.isSecureContext && 'usb' in navigator;
+}
+
+async function readText(stream) {
+  if (!stream) return '';
+
+  const reader = stream.getReader();
+  const decoder = new TextDecoder();
+  let result = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    result += decoder.decode(value, { stream: true });
+  }
+
+  result += decoder.decode();
+  return result;
 }

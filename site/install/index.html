@@ -5,16 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Install Dumbify</title>
   <link rel="stylesheet" href="../css/style.css">
-  <!-- ya-webadb from npm CDN (ES modules) -->
+  <!-- ya-webadb via esm.sh — pinned to the API shape used by the installer -->
   <script type="importmap">
   {
     "imports": {
-      "@yume-chan/adb": "https://cdn.jsdelivr.net/npm/@yume-chan/adb@0.0.24/esm/index.js",
-      "@yume-chan/adb-daemon-webusb": "https://cdn.jsdelivr.net/npm/@yume-chan/adb-daemon-webusb@0.0.24/esm/index.js",
-      "@yume-chan/async": "https://cdn.jsdelivr.net/npm/@yume-chan/async@0.0.4/esm/index.js",
-      "@yume-chan/event": "https://cdn.jsdelivr.net/npm/@yume-chan/event@0.0.4/esm/index.js",
-      "@yume-chan/stream-extra": "https://cdn.jsdelivr.net/npm/@yume-chan/stream-extra@0.0.24/esm/index.js",
-      "@yume-chan/struct": "https://cdn.jsdelivr.net/npm/@yume-chan/struct@0.0.24/esm/index.js"
+      "@yume-chan/adb": "https://esm.sh/@yume-chan/adb@0.0.24",
+      "@yume-chan/adb-daemon-webusb": "https://esm.sh/@yume-chan/adb-daemon-webusb@0.0.24?external=@yume-chan/adb"
     }
   }
   </script>
