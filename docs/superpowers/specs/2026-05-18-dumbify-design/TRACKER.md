@@ -80,11 +80,11 @@ Legend:
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 6.1 | `HomeScreen` — list of rules, current grants, status banner | ⬜ | |
-| 6.2 | Edit rule sheet (toggle allowed, change bypass, change delay) | ⬜ | |
-| 6.3 | Gate weakening edits with PIN/delay | ⬜ | |
-| 6.4 | `SettingsScreen` — change PINs, change mode, view audit log, **Remove Dumbify** | ⬜ | |
-| 6.5 | Compose Material3 theme | ⬜ | |
+| 6.1 | `HomeScreen` — list of rules, current grants, status banner | ✅ | Dashboard card banner, trailing-toggle rows, comfortable density |
+| 6.2 | Edit rule sheet (toggle allowed, change bypass, change delay) | ✅ | ModalBottomSheet with SegmentedButton bypass selector |
+| 6.3 | Gate weakening edits with PIN/delay | ✅ | Removal PIN required for allowed↑, delay↓, or weaker bypass mode |
+| 6.4 | `SettingsScreen` — change PINs, change mode, view audit log, **Remove Dumbify** | ✅ | Two-step PIN-change flow; mode change PIN-gated; danger zone card |
+| 6.5 | Compose Material3 theme | ✅ | Forest-green dark/light + DumbifyColors custom tokens (amber, successDot, dangerDot) |
 
 ## M7 — Optional launcher
 
@@ -107,14 +107,14 @@ Legend:
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 9.1 | `/site` skeleton (HTML/CSS/JS, no framework) | ⬜ | |
-| 9.2 | Integrate ya-webadb, USB device discovery | ⬜ | |
-| 9.3 | Pre-flight checks (Android version, accounts) | ⬜ | |
-| 9.4 | APK fetch from GitHub Releases API | ⬜ | |
-| 9.5 | Install + `set-device-owner` via WebADB | ⬜ | |
-| 9.6 | Error handling + remediation copy | ⬜ | |
-| 9.7 | Deploy to GitHub Pages | ⬜ | |
-| 9.8 | (Optional) custom domain `dumbify.app` | ⬜ | |
+| 9.1 | `/site` skeleton (HTML/CSS/JS, no framework) | ✅ | |
+| 9.2 | Integrate ya-webadb, USB device discovery | ✅ | |
+| 9.3 | Pre-flight checks (Android version, accounts) | ✅ | |
+| 9.4 | APK fetch from GitHub Releases API | ✅ | |
+| 9.5 | Install + `set-device-owner` via WebADB | ✅ | |
+| 9.6 | Error handling + remediation copy | ✅ | |
+| 9.7 | Deploy to GitHub Pages | ⬜ | pending deployment |
+| 9.8 | (Optional) custom domain `dumbify.app` | ⬜ | pending deployment |
 
 ## M10 — Testing & release
 
@@ -159,3 +159,4 @@ Legend:
 | 2026-05-18 | Plan 1 complete: M0, M1, M2 done. Bootstrap + DO + data layer landed. |
 | 2026-05-19 | Plan 2 complete: M3, M4 done. App blocking, bypass flow, notification suppression landed. |
 | 2026-05-19 | Plan 3 complete: M5 done. Setup wizard (8 screens), SetupViewModel, MainViewModel routing. Fixed AppMonitorService null-clear bug and BlockScreenActivity onNewIntent pkg update. |
+| 2026-05-24 | Plan 4 complete: M6 done. HomeScreen + EditRuleSheet + SettingsScreen + DumbifyTheme landed. |
