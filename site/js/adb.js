@@ -8,9 +8,18 @@
 
 import { credentialStore } from './credentialStore.js';
 
-const OWNER_COMPONENT = 'com.dumbify.app/.admin.DumbifyDeviceAdminReceiver';
-const GITHUB_API      = 'https://api.github.com/repos/ankitjainhere/dumbify/releases/latest';
+// Full component name required by dpm set-device-owner (shorthand causes IllegalArgumentException)
+const OWNER_COMPONENT = 'com.dumbify.app/com.dumbify.app.admin.DumbifyDeviceAdminReceiver';
 const TMP_PATH        = '/data/local/tmp/dumbify.apk';
+
+// TODO(prod): switch DEV_MODE to false and publish a GitHub Release before shipping.
+//   When DEV_MODE=false, downloadAndPush fetches from GitHub Releases API:
+//   https://api.github.com/repos/ankitjainhere/dumbify/releases/latest
+//   APK must be attached as a release asset ending in ".apk".
+//   See: docs/superpowers/specs/2026-05-18-dumbify-design/06-installer-site.md
+const DEV_MODE        = true;
+const DEV_APK_URL     = '/dumbify.apk';           // served from site/ root — copy APK here
+const GITHUB_API      = 'https://api.github.com/repos/ankitjainhere/dumbify/releases/latest';
 
 export class AdbSession {
   #device = null;
@@ -95,16 +104,31 @@ export class AdbSession {
     onLog('No accounts found ✓', 'ok');
   }
 
-  /** Fetch latest APK from GitHub Releases, push to device, return remote path. */
+  /** Fetch APK (local dev file or GitHub Release), push to device, return remote path. */
   async downloadAndPush(onLog, onProgress) {
-    onLog('Fetching latest release from GitHub…', 'info');
-    const rel = await fetch(GITHUB_API).then(r => r.json());
-    const asset = rel.assets?.find(a => a.name.endsWith('.apk'));
-    if (!asset) throw new Error('No APK asset found in latest release. Has a release been published?');
+    let apkUrl, apkName, total;
 
-    onLog(`Downloading ${asset.name} (${(asset.size / 1e6).toFixed(1)} MB)…`, 'info');
-    const res = await fetch(asset.browser_download_url);
-    const total = asset.size;
+    if (DEV_MODE) {
+      // DEV: serve APK from site/dumbify.apk (copy app/build/outputs/apk/debug/app-debug.apk there)
+      onLog('[DEV] Loading local APK from /dumbify.apk…', 'info');
+      apkUrl  = DEV_APK_URL;
+      apkName = 'dumbify.apk';
+      total   = null; // unknown size — progress bar will be indeterminate
+    } else {
+      onLog('Fetching latest release from GitHub…', 'info');
+      const rel = await fetch(GITHUB_API).then(r => r.json());
+      const asset = rel.assets?.find(a => a.name.endsWith('.apk'));
+      if (!asset) throw new Error('No APK asset found in latest release. Has a release been published?');
+      apkUrl  = asset.browser_download_url;
+      apkName = asset.name;
+      total   = asset.size;
+      onLog(`Downloading ${apkName} (${(total / 1e6).toFixed(1)} MB)…`, 'info');
+    }
+
+    if (DEV_MODE) onLog(`Downloading ${apkName}…`, 'info');
+    const res = await fetch(apkUrl);
+    if (!res.ok) throw new Error(`Failed to fetch APK: ${res.status} ${res.statusText}`);
+    if (total === null) total = parseInt(res.headers.get('content-length') || '0', 10) || 0;
     const reader = res.body.getReader();
     const chunks = [];
     let received = 0;
@@ -114,7 +138,7 @@ export class AdbSession {
       if (done) break;
       chunks.push(value);
       received += value.length;
-      onProgress(received / total);
+      onProgress(total > 0 ? received / total : -1);
     }
 
     const apkBytes = new Uint8Array(chunks.reduce((acc, c) => acc + c.length, 0));
@@ -151,14 +175,26 @@ export class AdbSession {
 
   /** dpm set-device-owner. */
   async setDeviceOwner(onLog) {
-    onLog('Setting Device Owner (requires no accounts, no existing DO)…', 'info');
-    const out = await this.shell(`dpm set-device-owner ${OWNER_COMPONENT}`);
-    onLog(out, out.toLowerCase().includes('success') ? 'ok' : 'err');
-    if (!out.toLowerCase().includes('success')) {
-      if (out.includes('accounts')) throw new Error('ACCOUNTS_PRESENT');
-      if (out.includes('already set')) throw new Error('DO_ALREADY_SET');
-      throw new Error(`set-device-owner failed: ${out}`);
+    onLog('Setting Device Owner…', 'info');
+
+    // No pipe — parse in JS to avoid grep exit-code throwing shell().
+    const policy = await this.shell('dumpsys device_policy').catch(() => '');
+    if (policy.includes('com.dumbify.app')) {
+      onLog('Device Owner already set to Dumbify ✓', 'ok');
+      return;
     }
+
+    // shell() throws on non-zero exit; catch and re-classify the error.
+    let out;
+    try {
+      out = await this.shell(`dpm set-device-owner ${OWNER_COMPONENT}`);
+    } catch (e) {
+      const msg = e.message;
+      if (msg.includes('accounts')) throw new Error('ACCOUNTS_PRESENT');
+      if (msg.includes('already set') || msg.includes('Invalid component')) throw new Error('DO_ALREADY_SET');
+      throw new Error(`set-device-owner failed: ${msg}`);
+    }
+    onLog(out, out.toLowerCase().includes('success') ? 'ok' : 'err');
   }
 
   async cleanup(remotePath) {
