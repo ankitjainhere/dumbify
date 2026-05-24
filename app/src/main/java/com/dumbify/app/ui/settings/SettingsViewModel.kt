@@ -14,7 +14,6 @@ import com.dumbify.app.data.entities.Event
 import com.dumbify.app.policy.PinManager
 import com.dumbify.app.policy.PinManager.VerifyResult
 import com.dumbify.app.ui.common.PinPromptState
-import com.dumbify.app.util.Clock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,14 +38,13 @@ class SettingsViewModel @Inject constructor(
     private val eventDao: EventDao,
     private val pinManager: PinManager,
     private val policyEnforcer: PolicyEnforcer,
-    private val clock: Clock,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
 
-    private var pendingAction: (() -> Unit)? = null
+    private var pendingAction: (suspend () -> Unit)? = null
     private var pinMode      = PinMode.VERIFY
     private var pinSetScope  : PinManager.Scope? = null
 
@@ -70,10 +68,8 @@ class SettingsViewModel @Inject constructor(
 
     fun changeMode(newMode: BlockMode) {
         gateWithRemovalPin("Enter Removal PIN", "Required to change block mode.") {
-            viewModelScope.launch {
-                val cfg = _uiState.value.config ?: return@launch
-                if (cfg.mode != newMode) configDao.upsert(cfg.copy(mode = newMode))
-            }
+            val cfg = _uiState.value.config ?: return@gateWithRemovalPin
+            if (cfg.mode != newMode) configDao.upsert(cfg.copy(mode = newMode))
         }
     }
 
@@ -154,10 +150,10 @@ class SettingsViewModel @Inject constructor(
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private fun gateWithRemovalPin(title: String, subtitle: String, action: () -> Unit) =
+    private fun gateWithRemovalPin(title: String, subtitle: String, action: suspend () -> Unit) =
         gateWithPin(PinManager.Scope.REMOVAL, title, subtitle, action)
 
-    private fun gateWithPin(scope: PinManager.Scope, title: String, subtitle: String, action: () -> Unit) {
+    private fun gateWithPin(scope: PinManager.Scope, title: String, subtitle: String, action: suspend () -> Unit) {
         pendingAction = action
         pinMode       = PinMode.VERIFY
         pinSetScope   = scope

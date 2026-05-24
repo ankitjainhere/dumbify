@@ -7,7 +7,6 @@ import com.dumbify.app.data.dao.EventDao
 import com.dumbify.app.data.entities.BlockMode
 import com.dumbify.app.data.entities.Config
 import com.dumbify.app.data.entities.UserRole
-import com.dumbify.app.policy.FakeClock
 import com.dumbify.app.policy.PinManager
 import com.dumbify.app.policy.PinManager.VerifyResult
 import com.google.common.truth.Truth.assertThat
@@ -40,7 +39,6 @@ class SettingsViewModelTest {
     private lateinit var pinManager: PinManager
     private lateinit var policyEnforcer: PolicyEnforcer
     private lateinit var context: Context
-    private lateinit var clock: FakeClock
 
     private val sampleConfig = Config(
         mode               = BlockMode.ALLOWLIST,
@@ -60,7 +58,6 @@ class SettingsViewModelTest {
         pinManager     = mockk()
         policyEnforcer = mockk()
         context        = mockk()
-        clock          = FakeClock(1_000_000L)
 
         coEvery { eventDao.recent(any()) } returns emptyList()
         every { configDao.observe() } returns flowOf(sampleConfig)
@@ -76,7 +73,6 @@ class SettingsViewModelTest {
         eventDao       = eventDao,
         pinManager     = pinManager,
         policyEnforcer = policyEnforcer,
-        clock          = clock,
         context        = context,
     )
 
