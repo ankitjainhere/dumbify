@@ -48,6 +48,8 @@ private val LightColorScheme = lightColorScheme(
     onPrimary              = Color(0xFFFFFFFF),
     primaryContainer       = Color(0xFFAEF2B8),
     onPrimaryContainer     = Color(0xFF002109),
+    secondary              = Color(0xFF506352),
+    onSecondary            = Color(0xFFFFFFFF),
     secondaryContainer     = Color(0xFFD2E8D2),
     onSecondaryContainer   = Color(0xFF0E1F12),
     error                  = Color(0xFFBA1A1A),
@@ -58,10 +60,12 @@ private val LightColorScheme = lightColorScheme(
     onBackground           = Color(0xFF181D17),
     surface                = Color(0xFFF7FBF2),
     onSurface              = Color(0xFF181D17),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
     surfaceContainerLow    = Color(0xFFF1F5EC),
     surfaceContainer       = Color(0xFFEBEFE6),
     surfaceContainerHigh   = Color(0xFFE5E9E0),
     onSurfaceVariant       = Color(0xFF414941),
+    outline                = Color(0xFF717971),
     outlineVariant         = Color(0xFFC1C9BF),
 )
 
