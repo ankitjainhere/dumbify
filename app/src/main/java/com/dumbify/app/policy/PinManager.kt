@@ -58,6 +58,14 @@ class PinManager @Inject constructor(
         }
     }
 
+    /** Returns minutes until PIN cooldown expires, rounded up. 0 if no cooldown active. */
+    fun cooldownRemainingMinutes(): Long {
+        val cooldownUntil = prefs.getLong(SecurePrefsKeys.PIN_COOLDOWN_UNTIL)
+        val remaining = cooldownUntil - clock.nowMillis()
+        if (remaining <= 0) return 0L
+        return (remaining + 59_999L) / 60_000L // ceil division
+    }
+
     private fun saltedInput(pin: String, salt: ByteArray): String {
         // Argon2-jvm's verify(hash, chars) handles its own embedded salt;
         // we additionally pepper with our SecurePrefs salt by prefixing,

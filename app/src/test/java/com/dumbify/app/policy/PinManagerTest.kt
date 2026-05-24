@@ -110,6 +110,21 @@ class PinManagerTest {
     }
 
     @Test
+    fun `cooldownRemainingMinutes returns 0 when no cooldown active`() {
+        // clock at 1_000_000, no cooldown set
+        assertThat(pinManager.cooldownRemainingMinutes()).isEqualTo(0L)
+    }
+
+    @Test
+    fun `cooldownRemainingMinutes returns remaining minutes rounded up`() {
+        pinManager.setPin(Scope.REMOVAL, "1234")
+        repeat(PinManager.MAX_ATTEMPTS) { pinManager.verify(Scope.REMOVAL, "wrong") }
+        // Cooldown set for 5 min from now. Advance 1.5 min (90s) → 3.5 min remaining → ceil = 4
+        clock.advance(90_000L)
+        assertThat(pinManager.cooldownRemainingMinutes()).isEqualTo(4L)
+    }
+
+    @Test
     fun `clearPin removes hash and salt`() {
         pinManager.setPin(Scope.REMOVAL, "1234")
         pinManager.clearPin(Scope.REMOVAL)
